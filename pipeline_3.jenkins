@@ -10,7 +10,11 @@ pipeline {
       }
       stage('List') {
         steps{      
-          bat("dir /B ${JENKINS_HOME}")
+          if (isUnix()) {
+                sh 'ls -la'
+            } else {
+                bat 'dir'
+            }
         }
 
 
