@@ -4,8 +4,10 @@ pipeline {
    stages {
       stage ('install requirements') {
         steps {
-          echo 'Installing requirements...'
-          sh 'pip install -r requirements.txt'
+          echo 'Creating virtual environment...'
+          sh 'python3 -m venv venv'
+          echo 'Activating virtual environment...'
+          sh '. venv/bin/activate && pip install -r requirements.txt'
         }
       }
       stage('run python test') {
