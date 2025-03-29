@@ -9,12 +9,8 @@ pipeline {
         }
       }
       stage('List') {
-        steps{      
-          if (isUnix()) {
-                sh 'ls -la'
-            } else {
-                bat 'dir'
-            }
+        steps{
+               sh 'ls -la'
         }
 
 
