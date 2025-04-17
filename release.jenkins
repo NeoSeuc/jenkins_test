@@ -19,12 +19,4 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            echo "✅ 'release' branch was created from 'dev' and pushed successfully."
-        }
-        failure {
-            echo "❌ Something went wrong while creating the 'release' branch."
-        }
-    }
 }
