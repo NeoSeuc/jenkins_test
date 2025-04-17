@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    environment {
+        SSH_REPO = 'git@github.com:NeoSeuc/jenkins_test.git'
+        BRANCH_NAME = 'release'
+    }
+
+    stages {
+        stage('Checkout dev branch') {
+            steps {
+                git branch: 'dev',
+                    credentialsId: 'your-ssh-creds-id',
+                    url: "${SSH_REPO}"
+            }
+        }
+
+        stage('Create and push release branch') {
+            steps {
+                sshagent (credentials: ['your-ssh-creds-id']) {
+                    sh '''
+                        git config user.name "jenkins"
+                        git config user.email "jenkins@example.com"
+
+                        git checkout -B ${BRANCH_NAME}
+
+                        git push origin ${BRANCH_NAME} --force
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ '${BRANCH_NAME}' branch created and pushed from dev (via SSH)."
+        }
+        failure {
+            echo "❌ SSH push failed."
+        }
+    }
+}
