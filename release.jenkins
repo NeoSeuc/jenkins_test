@@ -25,7 +25,7 @@ pipeline {
                         git checkout -B ${BRANCH_NAME}
 
                         # Override remote URL with embedded credentials
-                        git remote set-url origin https://${GIT_USER}:${GIT_PASS}@${REPO}
+                        git remote set-url origin https://${GIT_PASS}@${REPO}
 
                         git push origin ${BRANCH_NAME} --force
                     '''
