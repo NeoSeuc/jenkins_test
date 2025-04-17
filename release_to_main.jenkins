@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+    environment {
+        GIT_SSH_COMMAND = 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no'
+    }
+    stages {
+        stage('Checkout main branch') {
+            steps {
+                git branch: 'main',
+                    url: 'git@github.com:NeoSeuc/jenkins_test.git',
+                    credentialsId: '3cf81859-d6e3-41e4-81d0-5ea165eb591b'
+            }
+        }
+        stage('Merge release into main') {
+            steps {
+                sh '''
+                    git fetch origin release
+                    git merge origin/release -m "Merge release into main"
+                '''
+            }
+        }
+        stage('Push changes to main') {
+            steps {
+                sh '''
+                    git push origin main
+                '''
+            }
+        }
+    }
+    post {
+        success {
+            echo '✅ Successfully merged release into main!'
+        }
+        failure {
+            echo '❌ Merge or push failed.'
+        }
+    }
+}
