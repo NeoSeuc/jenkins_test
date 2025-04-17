@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Create and push release branch') {
+            steps {
+                sh '''
+                    git config user.name "jenkins"
+                    git config user.email "jenkins@example.com"
+
+                    # Create or reset 'release' branch from current dev
+                    git checkout -B release
+
+                    # Push to remote, overwrite if exists
+                    git push origin release --force
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ 'release' branch was created from 'dev' and pushed successfully."
+        }
+        failure {
+            echo "❌ Something went wrong while creating the 'release' branch."
+        }
+    }
+}
