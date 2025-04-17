@@ -1,22 +1,45 @@
 pipeline {
     agent any
 
+    environment {
+        REPO = 'github.com/NeoSeuc/jenkins_test'
+        BRANCH_NAME = 'release'
+    }
+
     stages {
+        stage('Checkout dev branch') {
+            steps {
+                git branch: 'dev',
+                    credentialsId: '8432b54c-8578-4904-aa5a-1b08c7e1b190',
+                    url: "https://${REPO}"
+            }
+        }
 
         stage('Create and push release branch') {
             steps {
-                sh '''
-                    git config user.name "jenkins"
-                    git config user.email "jenkins@example.com"
+                withCredentials([usernamePassword(credentialsId: '8432b54c-8578-4904-aa5a-1b08c7e1b190', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                    sh '''
+                        git config user.name "jenkins"
+                        git config user.email "jenkins@example.com"
 
-                    # Create or reset 'release' branch from current dev
-                    git checkout -B release
+                        git checkout -B ${BRANCH_NAME}
 
-                    # Push to remote, overwrite if exists
-                    git push origin release --force
-                '''
+                        # Override remote URL with embedded credentials
+                        git remote set-url origin https://${GIT_USER}:${GIT_PASS}@${REPO}
+
+                        git push origin ${BRANCH_NAME} --force
+                    '''
+                }
             }
         }
     }
 
+    post {
+        success {
+            echo "✅ '${BRANCH_NAME}' branch created and pushed from dev."
+        }
+        failure {
+            echo "❌ Failed to push the '${BRANCH_NAME}' branch."
+        }
+    }
 }
