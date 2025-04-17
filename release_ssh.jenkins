@@ -10,14 +10,14 @@ pipeline {
         stage('Checkout dev branch') {
             steps {
                 git branch: 'dev',
-                    credentialsId: 'your-ssh-creds-id',
+                    credentialsId: '3cf81859-d6e3-41e4-81d0-5ea165eb591b',
                     url: "${SSH_REPO}"
             }
         }
 
         stage('Create and push release branch') {
             steps {
-                sshagent (credentials: ['your-ssh-creds-id']) {
+                sshagent (credentials: ['3cf81859-d6e3-41e4-81d0-5ea165eb591b']) {
                     sh '''
                         git config user.name "jenkins"
                         git config user.email "jenkins@example.com"
